@@ -1,0 +1,135 @@
+body {
+    text-align: center;
+    padding-top: 40px;
+    background-color: #fcefd6;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0 10px;
+    font-size: 16px;
+}
+
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+}
+
+body.dark-mode .stats {
+    background: #2c2c2c;
+    color: #f4f4f4;
+}
+
+body.dark-mode .btn-upgrade {
+    filter: brightness(1.2);
+}
+
+#cookie {
+    width: 60vw;
+    max-width: 250px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+#cookie:active {
+    transform: scale(0.95);
+}
+
+.counter {
+    font-size: 1.8rem;
+    margin: 20px 0;
+}
+
+.btn-upgrade {
+    margin: 10px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#achievements {
+    margin-top: 20px;
+    color: green;
+    font-weight: bold;
+}
+
+.stats {
+    margin-top: 30px;
+    background: #fff4e0;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+audio {
+    display: none;
+}
+
+.inventory-item {
+    border: 2px solid #ccc;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: #fff;
+    min-width: 100px;
+    text-align: center;
+}
+
+body.dark-mode .inventory-item {
+    background-color: #333;
+    border-color: #666;
+}
+
+#loader {
+    position: fixed;
+    inset: 0;
+    background: #fcefd6;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-size: 1.5rem;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body.dark-mode #loader {
+    background: #1e1e1e;
+    color: #eee;
+}
+
+/* 📱 Mobile Responsiveness */
+@media (max-width: 600px) {
+    .btn-upgrade {
+        width: 100%;
+        font-size: 1rem;
+    }
+    
+    .stats {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+    
+    .inventory-item {
+        min-width: 80px;
+        font-size: 0.9rem;
+    }
+}
+/* 🔥 Power-up flash animation */
+#powerup-flash {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(255, 230, 0, 0.5);
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#powerup-flash.active {
+    opacity: 1;
+    animation: flash 0.4s ease forwards;
+}
+
+@keyframes flash {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0; }
+}

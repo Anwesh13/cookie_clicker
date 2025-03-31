@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fcefd6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <title>Cookie Clicker Deluxe</title>
+</head>
+<body>
+  <div id="powerup-flash"></div>
+
+  <div class="container">
+    <h1>🍪 Cookie Clicker Deluxe</h1>
+    <div class="form-check form-switch mb-3 text-end">
+      <input class="form-check-input" type="checkbox" id="darkModeToggle">
+      <label class="form-check-label" for="darkModeToggle">🌙 Dark Mode</label>
+    </div>
+    <img id="cookie" src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="cookie">
+    <div id="score" class="counter">Cookies: 0</div>
+
+    <button class="btn btn-primary btn-upgrade" onclick="buyClickUpgrade()" data-bs-toggle="tooltip" title="Increases cookies per click by 1">
+      Upgrade Click (+1) - Cost: 10
+    </button>
+    <button class="btn btn-success btn-upgrade" onclick="buyAutoClicker()" data-bs-toggle="tooltip" title="Generates 1 cookie/sec">
+      Buy Auto-Clicker (1/sec) - Cost: 50
+    </button>
+    <button class="btn btn-danger btn-upgrade" onclick="resetGame()" data-bs-toggle="tooltip" title="Wipe all progress">
+      Reset Game
+    </button>
+
+    <div class="form-check form-switch mt-3 text-end">
+      <input class="form-check-input" type="checkbox" id="musicToggle" checked>
+      <label class="form-check-label" for="musicToggle">🔊 Music / SFX</label>
+    </div>
+
+    <div id="achievements" class="mt-3 text-success fw-bold"></div>
+
+    <div class="stats text-start">
+      <h5>📊 Stats</h5>
+      <ul class="list-unstyled">
+        <li>Total Cookies Earned: <span id="totalCookies">0</span></li>
+        <li>Total Clicks: <span id="totalClicks">0</span></li>
+        <li>Click Upgrades Bought: <span id="clickUpgrades">0</span></li>
+        <li>Auto-Clickers Bought: <span id="autoClickers">0</span></li>
+      </ul>
+    </div>
+
+    <div class="stats text-start">
+      <h5>🎒 Inventory</h5>
+      <div id="inventory" class="d-flex gap-2 flex-wrap"></div>
+    </div>
+
+    <audio id="clickSound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+    <audio id="bgMusic" src="https://cdn.pixabay.com/audio/2022/10/30/audio_cea96705e2.mp3" loop preload="auto"></audio>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
