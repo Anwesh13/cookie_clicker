@@ -12,6 +12,7 @@ let inventory = {};
 let earnedAchievements = new Set();
 let deferredPrompt;
 
+// Inventory power-ups
 let inventoryEffects = {
     'Golden Cookie': {
         icon: '🍯',
@@ -24,6 +25,7 @@ let inventoryEffects = {
             this.active = true;
             this.cooldown = true;
             cookiesPerClick *= 2;
+            triggerFlash('rgba(255, 215, 0, 0.5)');
             displayMessage("🍯 Golden Cookie activated! Double cookies for 30s!");
             setTimeout(() => {
                 cookiesPerClick /= 2;
@@ -33,7 +35,7 @@ let inventoryEffects = {
             setTimeout(() => {
                 this.cooldown = false;
                 updateInventory();
-            }, 60000); // 60s cooldown
+            }, 60000);
             updateInventory();
         }
     },
@@ -46,6 +48,7 @@ let inventoryEffects = {
         activate: function () {
             if (this.cooldown) return;
             this.cooldown = true;
+            triggerFlash('rgba(128, 0, 128, 0.5)');
             const bonus = Math.random() < 0.5 ? 50 : 1;
             if (bonus === 50) {
                 cookies += 50;
@@ -58,7 +61,7 @@ let inventoryEffects = {
             setTimeout(() => {
                 this.cooldown = false;
                 updateInventory();
-            }, 45000); // 45s cooldown
+            }, 45000);
             updateUI();
             updateStats();
             saveGame();
@@ -75,6 +78,7 @@ let inventoryEffects = {
             if (this.active || this.cooldown) return;
             this.active = true;
             this.cooldown = true;
+            triggerFlash('rgba(0, 200, 255, 0.5)');
             autoClickers *= 2;
             displayMessage("🧤 Auto Clicker Pro: Auto speed 2x for 20s!");
             setTimeout(() => {
@@ -85,11 +89,56 @@ let inventoryEffects = {
             setTimeout(() => {
                 this.cooldown = false;
                 updateInventory();
-            }, 40000); // 40s cooldown
+            }, 40000);
             updateInventory();
         }
     }
 };
+
+const shopItems = {
+    'Golden Cookie': { icon: '🍯', cost: 300 },
+    'Mystery Box': { icon: '🎁', cost: 500 },
+    'Auto Clicker Pro': { icon: '🧤', cost: 750 }
+};
+
+function updateShop() {
+    const shopEl = document.getElementById('shop');
+    shopEl.innerHTML = '';
+    
+    for (let item in shopItems) {
+        const data = shopItems[item];
+        const btn = document.createElement('button');
+    
+        if (inventoryEffects[item]?.unlocked) {
+            btn.className = 'btn btn-outline-success disabled';
+            btn.innerHTML = `${data.icon} ${item} ✅ Purchased`;
+            btn.disabled = true;
+        } else {
+            btn.className = 'btn btn-outline-primary';
+            btn.innerHTML = `${data.icon} ${item} - ${data.cost} 🍪`;
+            btn.onclick = () => {
+                if (cookies >= data.cost) {
+                    cookies -= data.cost;
+                    inventoryEffects[item].unlocked = true;
+                    inventory[item] = true;
+                    displayMessage(`🛒 Purchased: ${item}!`);
+                    updateInventory();
+                    updateShop();
+                    updateUI();
+                    updateStats();
+                    saveGame();
+                } else {
+                    alert("Not enough cookies!");
+                }
+            };
+        }
+    
+        shopEl.appendChild(btn);
+    }
+    
+}
+
+
 
 function triggerFlash(color = 'rgba(255, 230, 0, 0.5)') {
     const flash = document.getElementById('powerup-flash');
@@ -99,8 +148,6 @@ function triggerFlash(color = 'rgba(255, 230, 0, 0.5)') {
         flash.classList.remove('active');
     }, 400);
 }
-
-
 
 // DOM Elements
 const scoreEl = document.getElementById('score');
@@ -117,7 +164,7 @@ const stats = {
     autoClickersEl: document.getElementById('autoClickers'),
 };
 
-// ===== UTILITY FUNCTIONS =====
+// Utility Functions
 function updateStats() {
     stats.totalCookiesEl.textContent = totalCookies;
     stats.totalClicksEl.textContent = totalClicks;
@@ -134,16 +181,12 @@ function updateUI() {
 function updateInventory() {
     const invEl = document.getElementById('inventory');
     invEl.innerHTML = '';
-    
     for (let item in inventory) {
         const effect = inventoryEffects[item];
         const div = document.createElement('div');
         div.className = 'inventory-item';
         div.innerHTML = `<span style="font-size: 2rem;">${effect.icon}</span>`;
-        div.title = effect.cooldown
-        ? `${item} is cooling down...`
-        : `Click to activate ${item}`;
-        
+        div.title = effect.cooldown ? `${item} is cooling down...` : `Click to activate ${item}`;
         div.style.cursor = effect.cooldown ? 'not-allowed' : 'pointer';
         div.style.opacity = effect.cooldown ? '0.5' : '1';
         div.onclick = () => {
@@ -155,10 +198,8 @@ function updateInventory() {
     }
 }
 
-
 function displayMessage(msg) {
-    const display = document.getElementById('achievements');
-    display.textContent = msg;
+    document.getElementById('achievements').textContent = msg;
 }
 
 function saveGame() {
@@ -173,7 +214,7 @@ function saveGame() {
     localStorage.setItem('autoClickersBought', autoClickersBought);
 }
 
-// ===== GAME LOGIC =====
+// Game Logic
 function buyClickUpgrade() {
     if (cookies >= upgradeCost) {
         cookies -= upgradeCost;
@@ -219,31 +260,31 @@ function resetGame() {
         for (let item in inventoryEffects) {
             inventoryEffects[item].unlocked = false;
             inventoryEffects[item].active = false;
+            inventoryEffects[item].cooldown = false;
         }
         earnedAchievements.clear();
         localStorage.clear();
         updateUI();
         updateStats();
         updateInventory();
+        updateShop(); // ← add this too
+        
         displayMessage('');
     }
 }
 
 function checkAchievements() {
-    const display = document.getElementById('achievements');
-    
     if (totalCookies >= 100 && !earnedAchievements.has('sweet')) {
         earnedAchievements.add('sweet');
-        display.textContent = '🏆 Achievement Unlocked: Sweet Tooth!';
+        displayMessage('🏆 Achievement Unlocked: Sweet Tooth!');
     } else if (clickUpgrades >= 10 && !earnedAchievements.has('clicker')) {
         earnedAchievements.add('clicker');
-        display.textContent = '🏆 Achievement Unlocked: Click Master!';
+        displayMessage('🏆 Achievement Unlocked: Click Master!');
     } else if (autoClickersBought >= 5 && !earnedAchievements.has('lazy')) {
         earnedAchievements.add('lazy');
-        display.textContent = '🏆 Achievement Unlocked: Lazy Genius!';
+        displayMessage('🏆 Achievement Unlocked: Lazy Genius!');
     }
     
-    // 🔓 Unlock inventory items
     for (let item in inventoryEffects) {
         if (!inventoryEffects[item].unlocked && inventoryEffects[item].unlockCheck()) {
             inventoryEffects[item].unlocked = true;
@@ -254,7 +295,7 @@ function checkAchievements() {
     }
 }
 
-// ===== EVENT HANDLERS =====
+// Events
 cookieEl.addEventListener('click', () => {
     cookies += cookiesPerClick;
     totalCookies += cookiesPerClick;
@@ -280,7 +321,7 @@ darkToggle.addEventListener('change', () => {
     applyTheme(darkToggle.checked ? 'dark' : 'light');
 });
 
-// ===== THEME / AUDIO / INSTALL =====
+// Theme + Install
 function applyTheme(mode) {
     document.body.classList.toggle('dark-mode', mode === 'dark');
     darkToggle.checked = mode === 'dark';
@@ -304,7 +345,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     });
 });
 
-// ===== INITIAL LOAD =====
+// Initial Load
 window.onload = () => {
     cookies = parseInt(localStorage.getItem('cookies')) || 0;
     cookiesPerClick = parseInt(localStorage.getItem('cookiesPerClick')) || 1;
@@ -330,6 +371,7 @@ window.onload = () => {
     updateUI();
     updateStats();
     updateInventory();
+    updateShop(); // ← add this
     document.getElementById('loader').style.display = 'none';
     
     if ('serviceWorker' in navigator) {
@@ -337,9 +379,11 @@ window.onload = () => {
             console.log("✅ Service worker registered");
         });
     }
+    
+    
 };
 
-// ===== AUTO CLICK LOOP =====
+// Auto click loop
 setInterval(() => {
     if (autoClickers > 0) {
         cookies += autoClickers;
